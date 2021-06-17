@@ -5,12 +5,18 @@ import Date from '../../components/date'
 import Game from '../../components/game'
 import utilStyles from '../../styles/utils.module.css'
 
+const fetcher = (...args) => fetch(...args).then(res => res.json())
+
 export async function getStaticProps({ params }) {
   // Add the "await" keyword like this:
   const postData = await getPostData(params.id)
+
+  const gameData = await fetcher('https://api.rawg.io/api/games/3328?key=81b107760b4a4d73bdf249eb7b30c88d')
+
   return {
     props: {
-      postData
+      postData,
+      gameData
     }
   }
 }
@@ -23,7 +29,7 @@ export async function getStaticPaths() {
   }
 }
 
-export default function Post({ postData }) {
+export default function Post({ postData, gameData }) {
   return (
     <Layout>
       <Head>
@@ -33,6 +39,7 @@ export default function Post({ postData }) {
         <h1 className={utilStyles.headingXl}>{postData.title}</h1>
         <div className={utilStyles.lightText}>
           <Date dateString={postData.date} />
+          <div>{gameData.name_original}</div>
           <Game />
         </div>
         <div dangerouslySetInnerHTML={{ __html: postData.contentHtml }} />
